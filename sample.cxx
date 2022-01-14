@@ -70,7 +70,7 @@ int main() {
 
   StrMap headerMap;
   WriterMock<opentracing::HTTPHeadersWriter> headerWriter(headerMap);
-  tracer->Inject(span->context(), headerWriter);
+  tracer->Inject(child_span->context(), headerWriter);
 
   callMockAdonis(headerMap); 
 
