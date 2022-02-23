@@ -13,13 +13,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # include opentracing
 include_directories(/usr/local/include)
-find_library(THRIFT_LIB thrift)
-find_library(OPENTRACING_LIB opentracing)
-find_library(YAML_CPP_LIB yaml-cpp)
-find_library(JAEGERTRACING_LIB jaegertracing)
-find_library(CURL curl)
-target_link_libraries(Sample PRIVATE ${OPENTRACING_LIB}
-                                     ${YAML_CPP_LIB}
-                                     ${THRIFT_LIB}
-                                     ${JAEGERTRACING_LIB}
-                                     ${CURL})
+
+find_package(CURL)
+find_package(Thrift)
+find_package(opentelemetry-cpp CONFIG REQUIRED HINTS "/usr/local/lib64/cmake/opentelemetry-cpp/")
+
+target_include_directories(Sample PRIVATE ${OPENTELEMETRY_CPP_INCLUDE_DIRS})
+target_link_libraries(Sample PRIVATE ${OPENTELEMETRY_CPP_LIBRARIES})
