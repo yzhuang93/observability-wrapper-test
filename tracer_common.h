@@ -1,3 +1,14 @@
+/**
+ * @file tracer_common.h
+ * @author Yiyang.Zhuang (yiyang.zhuang@nutanix.com)
+ * @brief Old tracing utils class, not being used any more. Only keep for reference purpose
+ * @version 0.1
+ * @date 2022-04-07
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #pragma once
 #include "opentelemetry/exporters/ostream/span_exporter.h"
 #include "opentelemetry/sdk/trace/simple_processor.h"
@@ -64,7 +75,7 @@ void initTracer()
 {
   //Init the tracer provider
   opentelemetry::exporter::jaeger::JaegerExporterOptions options;
-  options.endpoint         = "http://prismdevtest.umvm.nutanix.com:14268/api/traces";
+  options.endpoint         = "http://prismloadtest3.umvm.nutanix.com:14268/api/traces";
   options.transport_format = opentelemetry::exporter::jaeger::TransportFormat::kThriftHttp;
 
   // Create Jaeger exporter instance
