@@ -4,12 +4,13 @@
 #include "nutanix_observability.h"
 
 int main() {
-  std::cout << "Init NutanixObservability\n";
-  nutanix::NutanixObservability::InitNutanixObservability("yiyang-test-idf");
-  std::cout << "start span\n";
-  auto span = nutanix::NutanixObservability::StartSpan("test span init");
-  std::cout << "end span\n";
-  span.End();
+  nutanix::NutanixObservability::InitNutanixObservability("yiyang-test");
+  auto span_a = nutanix::NutanixObservability::StartSpan("span_a");
+  {
+    auto span_b = nutanix::NutanixObservability::StartSpan("span_b");
+    span_b->End();
+  }
+  span_a->End();
 
   return 0;
 }

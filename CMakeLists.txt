@@ -20,6 +20,8 @@ add_library(sample_lib
             nutanix_span.cc
             nutanix_observability.cc)
 
+find_library(JSON_CPP jsoncpp)
+find_library(GFLAGS gflags)
 find_library(THRIFT_LIBRARIES thrift)
 find_library(OPENTELEMETRY_CPP_COMMON_LIBRARIES opentelemetry_common)
 find_library(OPENTELEMETRY_CPP_JAEGER_EXPORTED_LIBRARIES opentelemetry_exporter_jaeger_trace)
@@ -29,10 +31,18 @@ find_library(OPENTELEMETRY_CPP_RESOURCES_LIBRARIES opentelemetry_resources)
 find_library(OPENTELEMETRY_CPP_TRACE_LIBRARIES opentelemetry_trace)
 find_library(OPENTELEMETRY_CPP_VERSION_LIBRARIES opentelemetry_version)
 find_library(HTTP_CLIENT_CURL_LIBRARIES http_client_curl)
-find_package(absl)
-Set(ABSL_LIBRARIES absl::bad_variant_access;absl::any;absl::base;absl::bits;absl::city)
+find_library(ABSL_BAD_VARIANT absl_bad_variant_access)
+find_library(ABSL_BAD_ANY_CAST_IMPL absl_bad_any_cast_impl)
+find_library(ABSL_BASE absl_base)
+find_library(ABSL_RAW_LOGGING_INTERNAL absl_raw_logging_internal)
+find_library(ABSL_DYNAMIC_ANNOTATION absl_dynamic_annotations)
+find_library(ABSL_LOG_SEVERITY absl_log_severity)
+find_library(ABSL_SPINLOCK_WAIT absl_spinlock_wait)
+find_library(ABSL_CITY absl_city)
 
-target_link_libraries(sample_lib 
+target_link_libraries(sample_lib
+    ${JSON_CPP}
+    ${GFLAGS}
     ${OPENTELEMETRY_CPP_COMMON_LIBRARIES}
     ${OPENTELEMETRY_CPP_JAEGER_EXPORTED_LIBRARIES}
     ${OPENTELEMETRY_CPP_OSTREAM_LIBRARIES}
@@ -42,7 +52,14 @@ target_link_libraries(sample_lib
     ${OPENTELEMETRY_CPP_VERSION_LIBRARIES}
     ${HTTP_CLIENT_CURL_LIBRARIES}
     ${THRIFT_LIBRARIES}
-    ${ABSL_LIBRARIES}
+    ${ABSL_BAD_VARIANT}
+    ${ABSL_BAD_ANY_CAST_IMPL}
+    ${ABSL_BASE}
+    ${ABSL_RAW_LOGGING_INTERNAL}
+    ${ABSL_DYNAMIC_ANNOTATION}
+    ${ABSL_LOG_SEVERITY}
+    ${ABSL_SPINLOCK_WAIT}
+    ${ABSL_CITY}
 )
 
 # add the executable
