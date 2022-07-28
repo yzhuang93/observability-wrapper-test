@@ -1,0 +1,20 @@
+{
+    "observability": {
+      "distributed_tracing": {
+        "jaeger": {
+          "agent_endpoint": "localhost:5012",
+          "agent_container_endpoint": "tracing-agent:5011"
+        },
+        "opentelemetry": {
+          "agent_endpoint": "localhost:5011",
+          "agent_container_endpoint": "tracing-agent:5011",
+          "collector_endpoint": "http://prismloadtest3.umvm.nutanix.com:14250",
+          "metrics_exporter": "none",
+          "logs_exporter": "none",
+          "trace_exporter": "jaeger",
+          "propagators": "tracecontext,baggage,jaeger"
+        },
+        "enabled": true
+      }
+    }
+  }
