@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 # set the project name
 project(Sample)
 
-set(NTNX_TOOLCHAIN_BUILDS_VERSION "82ee087e0bd6693a6f75c04db3ed205df8d84310")
+set(NTNX_TOOLCHAIN_BUILDS_VERSION "85ebebaf3dd05cac478fa39c056392a66232f9c7")
 
 list(APPEND CMAKE_PREFIX_PATH "/mnt/toolchain-builds/${NTNX_TOOLCHAIN_BUILDS_VERSION}.x86_64/lib/")
 list(APPEND CMAKE_PREFIX_PATH "/mnt/toolchain-builds/${NTNX_TOOLCHAIN_BUILDS_VERSION}.x86_64/lib/cmake")
