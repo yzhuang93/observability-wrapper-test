@@ -1,19 +1,22 @@
 #include <iostream>
+#include <fstream>
 #include <unistd.h>
-
-#include "nutanix_observability.h"
+#include "json/json.h"
+#include <json/value.h>
 
 int main() {
-  nutanix::NutanixObservability::InitNutanixObservability("yiyang-test");
-  auto span_a = nutanix::NutanixObservability::StartSpan("span_a");
-  {
-    auto span_b = nutanix::NutanixObservability::StartSpan("span_b");
-    span_b->End();
+  std::string collector_endpoint = "";
 
-    auto span_c = nutanix::NutanixObservability::CreateChildSpan("span_c", span_a);
-    span_c->End();
+  std::ifstream file_input("../config.json");
+  Json::Reader reader;
+  Json::Value data;
+  if (reader.parse(file_input, data)) {
+    collector_endpoint =
+      data["observability"]["distributed_tracing"]["opentelemetry"]
+        ["collector_endpoint"].asString();
+    file_input.close();
   }
-  span_a->End();
+  std::cout << "Collector_endpoint: " << collector_endpoint << "\n";
 
   return 0;
 }

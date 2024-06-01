@@ -8,61 +8,52 @@ set(NTNX_TOOLCHAIN_BUILDS_VERSION "85ebebaf3dd05cac478fa39c056392a66232f9c7")
 list(APPEND CMAKE_PREFIX_PATH "/mnt/toolchain-builds/${NTNX_TOOLCHAIN_BUILDS_VERSION}.x86_64/lib/")
 list(APPEND CMAKE_PREFIX_PATH "/mnt/toolchain-builds/${NTNX_TOOLCHAIN_BUILDS_VERSION}.x86_64/lib/cmake")
 
-# specify the C++ standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+SET(PLATFORM_PREFIX, /opt/cross/el8.5-x86_64/)
+SET(ARCH, x86_64)
+SET(CLANG_VERSION 13.0.1)
+SET(CMAKE_CUSTOM_SYSROOT /opt/cross/el8.5-x86_64/sysroot)
+SET(CMAKE_CUSTOM_CLANG_PLATFORM_PREFIX "/opt/cross/el8.5-x86_64/clang-${CLANG_VERSION}")
+
+# Define CMAKE_CXX_FLAGS: https://sourcegraph.ntnxdpro.com/devtools-master@a38a3511a40ac367b1f343b633c7f55c1428077a/-/blob/makefiles/CMakeLists.txt.common?L117
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-enum-compare")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-ignored-qualifiers")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GNU_SOURCE -D__STDC_FORMAT_MACROS")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CUSTOM_CXX_SYMBOLS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CUSTOM_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=nehalem -mtune=haswell")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
+
+# Define CLANG related flags: https://sourcegraph.ntnxdpro.com/devtools-master@a38a3511a40ac367b1f343b633c7f55c1428077a/-/blob/makefiles/CMakeLists.txt.common?L258
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} -B ${CMAKE_CUSTOM_CLANG_PLATFORM_PREFIX}/bin")
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} -target x86_64-redhat-linux")
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} --sysroot ${CMAKE_CUSTOM_SYSROOT}")
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} -resource-dir=${CMAKE_CUSTOM_CLANG_PLATFORM_PREFIX}/lib/clang")
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} -rtlib=compiler-rt")
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} -unwindlib=libunwind")
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} -stdlib=libc++")
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} -stdlib++-isystem${CMAKE_CUSTOM_CLANG_PLATFORM_PREFIX}/include/c++/v1")
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} -L${CMAKE_CUSTOM_CLANG_PLATFORM_PREFIX}/lib")
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} -fuse-ld=lld")
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} -Qunused-arguments")
+set(CLANG_CPP_FLAGS "${CLANG_CPP_FLAGS} -ftemplate-depth=512")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_CPP_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CLANG_CPP_FLAGS}")
+
+# set(CMAKE_CUSTOM_LINKFLAGS "${CMAKE_CUSTOM_LINKFLAGS} -lstdc++")
+set(CMAKE_CUSTOM_LINKFLAGS "${CMAKE_CUSTOM_LINKFLAGS} -Wl")
+set(CMAKE_CUSTOM_LINKFLAGS "${CMAKE_CUSTOM_LINKFLAGS} -dynamic-linker=${CMAKE_CUSTOM_SYSROOT}/lib64/ld-linux-x86-64.so.2")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_CUSTOM_LINKFLAGS}")
 
 # include header directories
 include_directories(/mnt/toolchain-builds/${NTNX_TOOLCHAIN_BUILDS_VERSION}.x86_64/include)
 
-add_library(sample_lib
-            nutanix_span.cc
-            nutanix_observability.cc)
-
-find_library(JSON_CPP jsoncpp)
-find_library(GFLAGS gflags)
-find_library(THRIFT_LIBRARIES thrift)
-find_library(OPENTELEMETRY_CPP_COMMON_LIBRARIES opentelemetry_common)
-find_library(OPENTELEMETRY_CPP_JAEGER_EXPORTED_LIBRARIES opentelemetry_exporter_jaeger_trace)
-find_library(OPENTELEMETRY_CPP_OSTREAM_LIBRARIES opentelemetry_exporter_ostream_span)
-find_library(OPENTELEMETRY_CPP_METRICS_LIBRARIES opentelemetry_metrics)
-find_library(OPENTELEMETRY_CPP_RESOURCES_LIBRARIES opentelemetry_resources)
-find_library(OPENTELEMETRY_CPP_TRACE_LIBRARIES opentelemetry_trace)
-find_library(OPENTELEMETRY_CPP_VERSION_LIBRARIES opentelemetry_version)
-find_library(HTTP_CLIENT_CURL_LIBRARIES http_client_curl)
-find_library(ABSL_BAD_VARIANT absl_bad_variant_access)
-find_library(ABSL_BAD_ANY_CAST_IMPL absl_bad_any_cast_impl)
-find_library(ABSL_BASE absl_base)
-find_library(ABSL_RAW_LOGGING_INTERNAL absl_raw_logging_internal)
-find_library(ABSL_DYNAMIC_ANNOTATION absl_dynamic_annotations)
-find_library(ABSL_LOG_SEVERITY absl_log_severity)
-find_library(ABSL_SPINLOCK_WAIT absl_spinlock_wait)
-find_library(ABSL_CITY absl_city)
-
-target_link_libraries(sample_lib
-    ${JSON_CPP}
-    ${GFLAGS}
-    ${OPENTELEMETRY_CPP_COMMON_LIBRARIES}
-    ${OPENTELEMETRY_CPP_JAEGER_EXPORTED_LIBRARIES}
-    ${OPENTELEMETRY_CPP_OSTREAM_LIBRARIES}
-    ${OPENTELEMETRY_CPP_METRICS_LIBRARIES}
-    ${OPENTELEMETRY_CPP_RESOURCES_LIBRARIES}
-    ${OPENTELEMETRY_CPP_TRACE_LIBRARIES}
-    ${OPENTELEMETRY_CPP_VERSION_LIBRARIES}
-    ${HTTP_CLIENT_CURL_LIBRARIES}
-    ${THRIFT_LIBRARIES}
-    ${ABSL_BAD_VARIANT}
-    ${ABSL_BAD_ANY_CAST_IMPL}
-    ${ABSL_BASE}
-    ${ABSL_RAW_LOGGING_INTERNAL}
-    ${ABSL_DYNAMIC_ANNOTATION}
-    ${ABSL_LOG_SEVERITY}
-    ${ABSL_SPINLOCK_WAIT}
-    ${ABSL_CITY}
-)
+find_library(JSON_CPP jsoncpp REQUIRED)
 
 # add the executable
 add_executable(Sample sample.cxx)
 
-target_link_libraries(Sample sample_lib)
+target_link_libraries(Sample ${JSON_CPP})
